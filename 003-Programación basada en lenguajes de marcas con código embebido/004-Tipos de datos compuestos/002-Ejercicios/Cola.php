@@ -12,8 +12,8 @@ foreach ($cola as $tarea) {
     echo $tarea . "\n";
 }
 
-// Usar peek para ver el primer elemento sin removerlo
-echo "\nPrimer elemento de la cola (peek): " . $cola->bottom() . "\n";
+// Usar bottom() para ver el primer elemento sin removerlo
+echo "\nPrimer elemento de la cola: " . $cola->bottom() . "\n";
 
 // Procesar elementos de la cola (dequeue)
 echo "\nProcesando tareas:\n";
