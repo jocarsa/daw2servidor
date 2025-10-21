@@ -1,0 +1,29 @@
+<?php
+// Crear una cola usando SplQueue
+$cola = new SplQueue();
+
+// Agregar elementos a la cola (enqueue)
+$cola->enqueue("Tarea 1");
+$cola->enqueue("Tarea 2");
+$cola->enqueue("Tarea 3");
+
+echo "Elementos en la cola:\n";
+foreach ($cola as $tarea) {
+    echo $tarea . "\n";
+}
+
+// Usar peek para ver el primer elemento sin removerlo
+echo "\nPrimer elemento de la cola (peek): " . $cola->bottom() . "\n";
+
+// Procesar elementos de la cola (dequeue)
+echo "\nProcesando tareas:\n";
+while (!$cola->isEmpty()) {
+    $tareaActual = $cola->dequeue(); // Quita el primer elemento
+    echo "Procesando: " . $tareaActual . "\n";
+}
+
+// Verificar si la cola está vacía
+if ($cola->isEmpty()) {
+    echo "\nLa cola está vacía.\n";
+}
+?>
