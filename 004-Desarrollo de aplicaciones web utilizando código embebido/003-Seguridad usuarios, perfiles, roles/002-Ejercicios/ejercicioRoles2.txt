@@ -1,0 +1,12 @@
+Crea y separa funciones.
+
+1) Modifica los permisos de cada rol para que el texto que aparezca en pantalla no sea texto plano si no enlaces a distintos archivos con estas funciones que tienen disponibles los usuarios de cada rol
+
+2) Crea una función bienvenido que muestre un mensaje de bienvenida 
+
+3) Crea una función añadir usuario que permita a la gente de mayor rango crear los perfiles de usuario de nuevos usuarios con un rol asignado por este administrador
+
+4) Crea una función buscar usuario que permita a una serie de roles introducir un nombre de usuario en un input text. Si el usuario está almacenado dentro de array de usuarios, devuelve los datos de dicho usuario (nombre, contraseña y rol)
+
+5) Crea una función modificar permisos que permita modificar desde la interfaz gráfica los permisos de cualquier rol seleccionando un rol dentro de los existentes y modificando el valor de cada permiso específicamente
+

@@ -1,0 +1,10 @@
+1) Arregla el login
+	Cambia el login para que el usuario solamente introduzca nombre de usuario y contraseña
+	Compara el nombre de usuario y contraseña con una array de usuarios que tiene {usuario;contraseña;rol;}
+	Asigna un rol diferente en función de su nombre de usuario
+2) Añade nuevos roles
+	Crea nuevos roles para usuarios específicos
+	Añade nuevas funcionalidades dentro del panel de control para los role nuevos
+3) Añade permisos
+	Modifica los roles para que las comprobaciones del panel de control no se hagan a nivel de rol sino de permiso
+	Cada rol tendrá una serie de permisos asignados en un array de roles con forma {rol;permiso1=true;permiso2=false}
