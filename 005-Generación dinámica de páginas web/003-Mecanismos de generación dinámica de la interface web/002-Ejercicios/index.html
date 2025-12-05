@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8">
+<body>
+
+<h2>Comunicación JavaScript → PHP</h2>
+
+<button id="btn1">Enviar número por POST</button><br><br>
+<button id="btn2">Enviar número por GET</button><br><br>
+<button id="btn3">Enviar JSON por POST</button><br><br>
+<button id="btn4">Enviar JSON por POST y recibir JSON</button><br><br>
+
+<p id="resultado"></p>
+
+<script>
+// --------------------------------------------------------------------
+// 1) Enviar número por POST
+// --------------------------------------------------------------------
+document.getElementById("btn1").addEventListener("click", async () => {
+    const numero = prompt("Introduce un número para POST:");
+
+    const respuesta = await fetch("procesar.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "accion=post_numero&numero=" + encodeURIComponent(numero)
+    });
+
+    document.getElementById("resultado").innerText = await respuesta.text();
+});
+
+
+// --------------------------------------------------------------------
+// 2) Enviar número por GET
+// --------------------------------------------------------------------
+document.getElementById("btn2").addEventListener("click", async () => {
+    const numero = prompt("Introduce un número para GET:");
+
+    // Se envía en la URL
+    const respuesta = await fetch("procesar.php?accion=get_numero&numero=" + encodeURIComponent(numero));
+
+    document.getElementById("resultado").innerText = await respuesta.text();
+});
+
+
+// --------------------------------------------------------------------
+// 3) Enviar JSON por POST
+// --------------------------------------------------------------------
+document.getElementById("btn3").addEventListener("click", async () => {
+    const nombre = prompt("Introduce tu nombre:");
+    const edad = prompt("Introduce tu edad:");
+
+    const datos = { nombre: nombre, edad: parseInt(edad) };
+
+    const respuesta = await fetch("procesar.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            accion: "json_datos",
+            persona: datos
+        })
+    });
+
+    document.getElementById("resultado").innerText = await respuesta.text();
+});
+
+// --------------------------------------------------------------------
+// 4) Enviar JSON por POST y recibir JSON desde PHP, pero mostrando solo el mensaje
+// --------------------------------------------------------------------
+document.getElementById("btn4").addEventListener("click", async () => {
+    const nombre = prompt("Introduce tu nombre:");
+    const edad = prompt("Introduce tu edad:");
+
+    const datos = { nombre: nombre, edad: parseInt(edad) };
+
+    const respuesta = await fetch("procesar.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            accion: "json_datos_json",
+            persona: datos
+        })
+    });
+
+    // Recibir JSON del servidor
+    const json = await respuesta.json();
+
+    // Mostrar solo lo que nos interesa
+    const saludo = json.saludo;
+    const mensaje = json.mensaje;
+
+    document.getElementById("resultado").innerText =
+        saludo + "\n" + mensaje;
+});
+</script>
+
+</body>
+</html>
+
