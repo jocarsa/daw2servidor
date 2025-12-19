@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8">
+<html>
+<body>
+
+<h2>Cookies Cliente ↔ Servidor (PHP)</h2>
+
+<button id="btn1">Enviar cookie</button><br><br>
+<button id="btn2">Enviar cookie y recibir cookie</button>
+
+<p id="resultado"></p>
+
+<script>
+  // Función para crear una cookie
+  function setCookie(nombre, valor, dias) {
+    const fecha = new Date();
+    fecha.setTime(fecha.getTime() + (dias * 24 * 60 * 60 * 1000)); // duración en días
+    const expiracion = "expires=" + fecha.toUTCString();
+    document.cookie = nombre + "=" + encodeURIComponent(valor) + ";" + expiracion + ";path=/";
+  }
+
+  // Función para leer una cookie
+  function getCookie(nombre) {
+    const nombreEQ = nombre + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      let c = cookies[i].trim();
+      if (c.indexOf(nombreEQ) === 0) {
+        return decodeURIComponent(c.substring(nombreEQ.length));
+      }
+    }
+    return null;
+  }
+
+  // Función para borrar una cookie
+  function deleteCookie(nombre) {
+    document.cookie = nombre + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }
+
+  // --------------------------------------------------
+  // BOTÓN 1: servidor lee cookie "usuario" y responde con texto
+  // --------------------------------------------------
+  document.getElementById("btn1").addEventListener("click", async () => {
+    const nombre = prompt("Introduce tu nombre:");
+    if (!nombre) {
+      document.getElementById("resultado").innerText = "No se introdujo nombre.";
+      return;
+    }
+
+    // Creamos cookie en el cliente
+    setCookie("usuario", nombre, 1);
+
+    // Llamada al servidor: él leerá $_COOKIE["usuario"] y responderá con texto
+    const respuesta = await fetch("cookies.php?accion=leer_cookie", {
+      method: "GET",
+      credentials: "same-origin"
+    });
+
+    const texto = await respuesta.text();
+    document.getElementById("resultado").innerText = texto;
+  });
+
+  // --------------------------------------------------
+  // BOTÓN 2: servidor crea una cookie y el cliente la usa para mostrar el mensaje
+  // --------------------------------------------------
+  document.getElementById("btn2").addEventListener("click", async () => {
+    const nombre = prompt("Introduce tu nombre:");
+    if (!nombre) {
+      document.getElementById("resultado").innerText = "No se introdujo nombre.";
+      return;
+    }
+
+    // Creamos cookie en el cliente
+    setCookie("usuario", nombre, 1);
+
+    // Pedimos al servidor que nos "devuelva" la info en forma de cookie (Set-Cookie)
+    // Importante: credentials para que el navegador acepte/mande cookies en fetch
+    const respuesta = await fetch("cookies.php?accion=servidor_set_cookie", {
+      method: "GET",
+      credentials: "same-origin"
+    });
+
+    // Leemos texto (opcional, solo informativo)
+    await respuesta.text();
+
+    // Ahora el navegador ya debería haber guardado la cookie enviada por PHP
+    const valorCookieServidor = getCookie("mensaje_servidor");
+
+    if (valorCookieServidor) {
+      document.getElementById("resultado").innerText =
+        "Mensaje construido usando la cookie del servidor:\n" + valorCookieServidor;
+    } else {
+      document.getElementById("resultado").innerText =
+        "No se encontró la cookie 'mensaje_servidor'.";
+    }
+  });
+</script>
+
+</body>
+</html>
