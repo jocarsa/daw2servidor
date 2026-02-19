@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Filtro de videojuegos</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; }
+    .fila { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    label { min-width: 170px; }
+    input { padding: 6px; }
+    button { padding: 8px 12px; cursor: pointer; }
+    pre { background: #f6f6f6; padding: 12px; border-radius: 6px; overflow: auto; }
+    .error { color: #b00020; }
+  </style>
+</head>
+<body>
+
+  <h2>Buscar videojuegos por precio y año</h2>
+
+  <div class="fila">
+    <label for="precio">Precio máximo (€):</label>
+    <input id="precio" type="number" step="0.01" min="0" value="60" />
+  </div>
+
+  <div class="fila">
+    <label for="anio">Año mínimo (posterior a):</label>
+    <input id="anio" type="number" min="1970" max="2100" value="2020" />
+  </div>
+
+  <div class="fila">
+    <button id="btnBuscar">Buscar</button>
+  </div>
+
+  <p id="estado"></p>
+  <pre id="resultado">Pulsa “Buscar” para ver resultados…</pre>
+
+<script>
+document.getElementById("btnBuscar").addEventListener("click", async () => {
+  const precio = document.getElementById("precio").value;
+  const anio = document.getElementById("anio").value;
+
+  const estado = document.getElementById("estado");
+  const resultado = document.getElementById("resultado");
+
+  estado.className = "";
+  estado.innerText = "Consultando servidor...";
+  resultado.innerText = "";
+
+  // Construimos una fecha mínima a partir del año
+  // "posterior a 2020" -> fechaMin = "2020-12-31" para que cuente 2021 en adelante
+  const fechaMin = `${anio}-12-31`;
+
+  try {
+    const resp = await fetch("videojuegos_api.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        accion: "filtrar_videojuegos",
+        precio_max: parseFloat(precio),
+        fecha_min: fechaMin
+      })
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      estado.className = "error";
+      estado.innerText = "Error del servidor";
+      resultado.innerText = JSON.stringify(data, null, 2);
+      return;
+    }
+
+    estado.innerText = `Resultados: ${data.total} juego(s)`;
+
+    // Mostrar resultados
+    if (data.total === 0) {
+        resultado.innerText = "No hay juegos que cumplan el filtro.";
+        return;
+    }
+
+    let texto = "";
+
+    data.juegos.forEach(function(j) {
+    texto += "#" + j.id_videojuego +
+             " | " + j.titulo +
+             " | " + j.fecha_lanzamiento +
+             " | €" + j.precio_base +
+             "\n";
+    });
+
+    resultado.innerText = texto;
+
+
+  } catch (err) {
+    estado.className = "error";
+    estado.innerText = "Error de red o JSON inválido";
+    resultado.innerText = String(err);
+  }
+});
+</script>
+
+</body>
+</html>
