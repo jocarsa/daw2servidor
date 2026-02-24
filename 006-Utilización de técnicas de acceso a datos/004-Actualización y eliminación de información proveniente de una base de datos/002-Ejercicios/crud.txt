@@ -1,0 +1,15 @@
+Crea un crud completo:
+	- Conecta cliente con servidor
+	- Permite añadir nuevos juegos a la tabla de videojuegos, con todos los campos necesarios
+		- La respuesta del servidor es la fila añadida, la cual tiene que ser mostrada
+	- Permite modificar los juegos 
+		- La respuesta del servidor es la fila actualizada, la cual tiene que ser mostrada
+	- Permite borrar los juegos
+		- La respuesta del servidor es la fila borrada, la cual tiene que ser mostrada
+	- Permite mostrar la tabla entera de videojuegos o solamente la fila especificada
+		- Se pueden seleccionar filas en concreto por id o por nombre
+
+Ampliación:
+	- Añade una opción que permita seleccionar un juego, por id o por nombre, y que muestre el nombre 	del juego en cuestión junto con el nombre del estudio que lo desarrolla y el género del juego.
+		- Obtén toda la información en una única consulta
+	- Permite modificar el género y el estudio asociado a cada videojuego
