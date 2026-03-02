@@ -1,0 +1,5 @@
+Utiliza el formulario de validación de datos de cliente sobre a tabla desarrollador para:
+	- Insertar los datos del formulario mediante una transacción (que devuelva la tabla completa)
+	- Actualizar los datos de una fila del formulario mediante una transacción (que devuelva la tabla completa)
+	- Eliminar los datos de una fila del formulario mediante una transacción (que devuelva la tabla completa)
+	- Añade rollback en el catch de las peticiones al servidor
