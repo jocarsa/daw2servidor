@@ -1,5 +1,12 @@
 Utiliza el formulario de validación de datos de cliente sobre a tabla desarrollador para:
-	- Insertar los datos del formulario mediante una transacción (que devuelva la tabla completa)
-	- Actualizar los datos de una fila del formulario mediante una transacción (que devuelva la tabla completa)
-	- Eliminar los datos de una fila del formulario mediante una transacción (que devuelva la tabla completa)
+	- Insertar los datos del formulario mediante una transacción (que devuelva 	la tabla completa)
+	- Actualizar los datos de una fila del formulario mediante una transacción 	(que devuelva la tabla completa)
+	- Eliminar los datos de una fila del formulario mediante una transacción 	(que devuelva la tabla completa)
 	- Añade rollback en el catch de las peticiones al servidor
+
+Ampliación:
+	- Transformar los 6 en 4
+		- Tendréis 3 botones (uno para insert, otro para update y otro 			para delete)
+		- Debajo de la vista de la tabla con los resultados añadiréis un 4 		botón "Confirmar los cambios"
+			- Al darle se ejecuta la misma transacción que antes pero 			esta si que se le hace commit
+			- Será necesario guardar en el cliente un objeto que 				almacene los últimos datos del formulario que han sido 				enviados y el tipo de conexión que se ha hecho con el 				servidor (insert, update y delete)
