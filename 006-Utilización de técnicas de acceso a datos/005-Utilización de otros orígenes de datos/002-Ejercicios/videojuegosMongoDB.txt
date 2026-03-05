@@ -1,0 +1,5 @@
+Crea una copia del formulario de videojuegos pero añadiendo validación y feedback (como en el de desarrollador)
+
+Completa la collection juegos (la "tabla") con todos los datos que tenemos en MySQL.
+	- Muestra toda la información de la collection bajo de la tabla
+	- Solo se pueden mostrar los datos para los cuales tenemos dato de verdad
