@@ -19,7 +19,7 @@ Para arrancarlo manualmente desde terminal:
 
 Instalar extensión MongoDB en PHP
 --------------------------------
-Descargar la DLL correspondiente a tu versión de PHP desde:
+Descargar la DLL correspondiente a tu versión de PHP desde: (ejecutar datos.php para comprobar version)
 https://pecl.php.net/package/mongodb
 
 Copiar el archivo:
@@ -43,6 +43,10 @@ extension=mongodb
 
 Reiniciar Apache desde XAMPP.
 
+Instalar composer
+--------------------------------
+
+https://getcomposer.org/download/
 
 Comprobar que la extensión funciona
 --------------------------------
@@ -76,6 +80,16 @@ Usar el autoload de Composer
 --------------------------------
 
 Este archivo carga automáticamente todas las librerías instaladas.
+
+
+Abrir el servidor
+--------------------------------
+
+Crear una carpeta donde se vaya a almacenar la base de datos. C:\mongodb\data
+
+Ejecutar el siguiente comando para arrancar el servidor.
+
+& "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --dbpath C:\mongodb\data
 */
 
 require 'vendor/autoload.php';
