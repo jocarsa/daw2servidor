@@ -145,5 +145,9 @@ foreach ($cursor as $juego) {
         echo "PEGI: " . $juego["pegi"] . "<br>";
     }
 
+    if (isset($juego["motor"])) {
+        echo "Motor: " . $juego["motor"] . "<br>";
+    }
+
     echo "<hr>";
 }
