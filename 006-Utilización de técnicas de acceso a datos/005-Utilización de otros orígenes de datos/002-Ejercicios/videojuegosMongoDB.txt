@@ -9,3 +9,12 @@ Completa la collection juegos (la "tabla") con todos los datos que tenemos en My
 	- Muestra toda la información de la collection bajo de la tabla
 	- Solo se pueden mostrar los datos para los cuales tenemos dato de 	verdad
 	- Muestra también los datos del estudio y dlc de cada juego
+
+Completa el CRUD
+	- Añade la opción de insertar nuevos datos a partir del formulario
+	- Añade la opción de actualizar un dato
+		- Se tiene que poder seleccionar por id o por titulo
+	- Añade la opción de eliminar un dato
+		- Se tiene que poder seleccionar por id o por titulo
+	- Añade la opción de buscar un dato
+		- Se tiene que poder seleccionar por id o por titulo
