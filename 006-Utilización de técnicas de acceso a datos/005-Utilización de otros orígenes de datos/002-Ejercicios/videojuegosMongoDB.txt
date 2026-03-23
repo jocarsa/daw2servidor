@@ -1,9 +1,15 @@
+Cliente:
+
 Crea una copia del formulario de videojuegos pero añadiendo validación y feedback (como en el de desarrollador)
 	- No añadas ni id_estudio ni id_videojuego_padre
 	- Añade también los datos del estudio y del dlc
 		- Añade teléfono y correo al estudio
 			- Valida el teléfono, el correo y la web del estudio 			con RegExp
 	- Controla el tiempo de respuesta en las peticiones al servidor
+
+----------------------------------------------------------------------------------
+
+Servidor:
 
 Completa la collection juegos (la "tabla") con todos los datos que tenemos en MySQL.
 	- Muestra toda la información de la collection bajo de la tabla
