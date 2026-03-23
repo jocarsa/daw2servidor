@@ -1,0 +1,6 @@
+Conecta el formulario de validación del ejercicio de cliente a servidor y de servidor a la base de datos en MySQL:
+- Inserta los datos del formulario en una tabla
+- Actualiza los datos de una columna de una fila seleccionada por nombre	- La actualización se hace en una transacción
+	- La transacción devuelve la fila modificada
+- Elimina los datos de una fila seleccionada por nombre
+- Busca una fila por nombre de usuario	
