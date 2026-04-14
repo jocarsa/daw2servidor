@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda online por servicios</title>
+</head>
+<body>
+
+    <h1>Tienda online separada por servicios</h1>
+
+    <h2>1. Catálogo</h2>
+    <button id="btnCargarProductos">Cargar productos</button>
+    <br><br>
+
+    <label for="producto">Producto:</label><br>
+    <select id="producto">
+        <option value="">-- Selecciona un producto --</option>
+    </select>
+
+    <p id="listaProductos"></p>
+
+    <hr>
+
+    <h2>2. Consultar stock</h2>
+    <button id="btnConsultarStock">Consultar stock del producto seleccionado</button>
+    <p id="resultadoStock"></p>
+
+    <hr>
+
+    <h2>3. Crear pedido</h2>
+
+    <label for="cliente">Nombre del cliente:</label><br>
+    <input type="text" id="cliente"><br><br>
+
+    <label for="cantidad">Cantidad:</label><br>
+    <input type="number" id="cantidad" min="1" value="1"><br><br>
+
+    <button id="btnCrearPedido">Crear pedido</button>
+
+    <p id="resultadoPedido"></p>
+
+    <script>
+        const selectProducto = document.getElementById("producto");
+        const listaProductos = document.getElementById("listaProductos");
+        const resultadoStock = document.getElementById("resultadoStock");
+        const resultadoPedido = document.getElementById("resultadoPedido");
+
+        document.getElementById("btnCargarProductos").addEventListener("click", cargarProductos);
+        document.getElementById("btnConsultarStock").addEventListener("click", consultarStock);
+        document.getElementById("btnCrearPedido").addEventListener("click", crearPedido);
+
+        async function cargarProductos() {
+            listaProductos.innerText = "Cargando productos...";
+            resultadoStock.innerText = "";
+            resultadoPedido.innerText = "";
+
+            try {
+                const respuesta = await fetch("servicio_productos.php");
+                const data = await respuesta.json();
+
+                if (!data.ok) {
+                    listaProductos.innerText = data.mensaje || "Error al cargar productos";
+                    return;
+                }
+
+                selectProducto.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+
+                let texto = "";
+
+                data.productos.forEach(function(producto) {
+                    const option = document.createElement("option");
+                    option.value = producto.id_producto;
+                    option.textContent = producto.nombre + " - €" + producto.precio;
+                    selectProducto.appendChild(option);
+
+                    texto += producto.id_producto + " - " + producto.nombre + " - €" + producto.precio + "\n";
+                });
+
+                listaProductos.innerText = texto;
+
+            } catch (error) {
+                listaProductos.innerText = "Error de red al cargar productos";
+            }
+        }
+
+        async function consultarStock() {
+            const idProducto = selectProducto.value;
+            resultadoStock.innerText = "";
+            resultadoPedido.innerText = "";
+
+            if (idProducto === "") {
+                resultadoStock.innerText = "Debes seleccionar un producto.";
+                return;
+            }
+
+            try {
+                const respuesta = await fetch("servicio_stock.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id_producto: parseInt(idProducto)
+                    })
+                });
+
+                const data = await respuesta.json();
+
+                if (!data.ok) {
+                    resultadoStock.innerText = data.mensaje || "Error al consultar stock";
+                    return;
+                }
+
+                resultadoStock.innerText =
+                    "Producto: " + data.producto + "\n" +
+                    "Stock disponible: " + data.stock;
+
+            } catch (error) {
+                resultadoStock.innerText = "Error de red al consultar stock";
+            }
+        }
+
+        async function crearPedido() {
+            const idProducto = selectProducto.value;
+            const cliente = document.getElementById("cliente").value.trim();
+            const cantidad = document.getElementById("cantidad").value;
+
+            resultadoPedido.innerText = "";
+
+            if (idProducto === "") {
+                resultadoPedido.innerText = "Debes seleccionar un producto.";
+                return;
+            }
+
+            if (cliente === "") {
+                resultadoPedido.innerText = "Debes escribir el nombre del cliente.";
+                return;
+            }
+
+            if (cantidad === "" || parseInt(cantidad) < 1) {
+                resultadoPedido.innerText = "Debes indicar una cantidad válida.";
+                return;
+            }
+
+            try {
+                const respuesta = await fetch("servicio_pedidos.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        cliente: cliente,
+                        id_producto: parseInt(idProducto),
+                        cantidad: parseInt(cantidad)
+                    })
+                });
+
+                const data = await respuesta.json();
+
+                if (!data.ok) {
+                    resultadoPedido.innerText = data.mensaje || "Error al crear pedido";
+                    if (data.stock_actual !== undefined) {
+                        resultadoPedido.innerText += "\nStock actual: " + data.stock_actual;
+                    }
+                    return;
+                }
+
+                resultadoPedido.innerText =
+                    data.mensaje + "\n" +
+                    "ID pedido: " + data.id_pedido + "\n" +
+                    "Producto: " + data.producto + "\n" +
+                    "Cliente: " + data.cliente + "\n" +
+                    "Cantidad: " + data.cantidad + "\n" +
+                    "Precio unitario: €" + data.precio_unitario + "\n" +
+                    "Total: €" + data.total + "\n" +
+                    "Stock restante: " + data.stock_restante;
+
+                consultarStock();
+
+            } catch (error) {
+                resultadoPedido.innerText = "Error de red al crear pedido";
+            }
+        }
+    </script>
+
+</body>
+</html>

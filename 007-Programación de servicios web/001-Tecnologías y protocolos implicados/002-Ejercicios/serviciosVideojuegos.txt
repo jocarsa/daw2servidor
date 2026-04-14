@@ -1,0 +1,15 @@
+Crea una aplicación que se conecte a múltiples servicios:
+	- Servicio Videojuegos:
+		- Devuelve toda la tabla
+		- Devuelve la tabla filtrada por precio
+	- Servicio Disponibilidad:
+		- Recibe un id de videojuego
+		- Devuelve todas las tiendas en las que está disponible
+		- Recibe una cantidad de stock y la resta del total (si es posible)
+	- Servicio Cálculo precio:
+		- Recibe precio, cantidad, descuento, iva
+		- Devuelve el subtotal, el importe de iva, el importe descontado y el total a pagar
+
+El cliente tiene que:
+	- Poder seleccionar mediante un select el videojuego en cuestión (como en el ejemplo, no hagáis un input)
+	- Poder introducir una cantidad, porcentaje de descuento y e iva de manera manual
