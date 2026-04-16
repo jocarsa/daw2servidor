@@ -1,0 +1,5 @@
+Ampliar el ejemplo de calculadora con multiplicación y división:
+	- La multiplicación sigue la misma estructura que la suma y la resta
+	- La división devolverá resultado y resto
+		- Será necesario hacer una función especial para devolver la división
+		- Habrá que lanzar un error en caso de división entre 0
