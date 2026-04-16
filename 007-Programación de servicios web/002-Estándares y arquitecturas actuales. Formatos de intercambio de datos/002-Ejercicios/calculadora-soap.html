@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora SOAP didáctica</title>
+</head>
+<body>
+
+    <h1>Calculadora SOAP didáctica</h1>
+
+    <p>
+        Este ejemplo envía una petición SOAP en XML a un servidor PHP
+        usando HTTP POST.
+    </p>
+
+    <label for="operacion">Operación:</label><br>
+    <select id="operacion">
+        <option value="sumar">sumar</option>
+        <option value="restar">restar</option>
+    </select>
+    <br><br>
+
+    <label for="a">Primer número:</label><br>
+    <input type="number" id="a" value="8">
+    <br><br>
+
+    <label for="b">Segundo número:</label><br>
+    <input type="number" id="b" value="3">
+    <br><br>
+
+    <button id="btnEnviar">Enviar petición SOAP</button>
+    <br><br>
+
+    <p>
+        <a href="calculadora.wsdl" target="_blank">Ver WSDL del servicio</a>
+    </p>
+
+    <h2>Petición SOAP enviada</h2>
+    <pre id="peticion"></pre>
+
+    <h2>Respuesta SOAP recibida</h2>
+    <pre id="respuesta"></pre>
+
+    <h2>Resultado interpretado</h2>
+    <p id="resultado"></p>
+
+    <script>
+        document.getElementById("btnEnviar").addEventListener("click", async () => {
+            const operacion = document.getElementById("operacion").value;
+            const a = document.getElementById("a").value;
+            const b = document.getElementById("b").value;
+
+            const xmlSOAP =
+                `<?xml version="1.0" encoding="UTF-8"?>
+                <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap:Body>
+                    <${operacion}>
+                    <a>${a}</a>
+                    <b>${b}</b>
+                    </${operacion}>
+                </soap:Body>
+                </soap:Envelope>`;
+
+            document.getElementById("peticion").innerText = xmlSOAP;
+            document.getElementById("respuesta").innerText = "Enviando...";
+            document.getElementById("resultado").innerText = "";
+
+            try {
+                const respuesta = await fetch("calculadora-soap.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/xml; charset=utf-8",
+                        "Accept": "text/xml"
+                    },
+                    body: xmlSOAP
+                });
+
+                const textoRespuesta = await respuesta.text();
+                document.getElementById("respuesta").innerText = textoRespuesta;
+
+                // Interpretar la respuesta XML
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(textoRespuesta, "text/xml");
+
+                const nodoResultado = xml.getElementsByTagName("resultado")[0];
+                const nodoFault = xml.getElementsByTagName("faultstring")[0];
+
+                if (nodoResultado) {
+                    document.getElementById("resultado").innerText =
+                        "Resultado devuelto por el servicio: " + nodoResultado.textContent;
+                } else if (nodoFault) {
+                    document.getElementById("resultado").innerText =
+                        "Error SOAP: " + nodoFault.textContent;
+                } else {
+                    document.getElementById("resultado").innerText =
+                        "No se pudo interpretar la respuesta.";
+                }
+
+            } catch (error) {
+                document.getElementById("respuesta").innerText = "Error de red";
+                document.getElementById("resultado").innerText = String(error);
+            }
+        });
+    </script>
+
+</body>
+</html>

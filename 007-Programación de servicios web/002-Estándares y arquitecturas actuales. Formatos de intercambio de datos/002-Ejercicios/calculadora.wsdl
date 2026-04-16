@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    name="CalculadoraSOAP"
+    targetNamespace="urn:CalculadoraSOAP"
+    xmlns:tns="urn:CalculadoraSOAP"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema targetNamespace="urn:CalculadoraSOAP">
+
+            <xsd:element name="sumar">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="a" type="xsd:double"/>
+                        <xsd:element name="b" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="sumarResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="resultado" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="restar">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="a" type="xsd:double"/>
+                        <xsd:element name="b" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="restarResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="resultado" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <message name="sumarRequest">
+        <part name="parameters" element="tns:sumar"/>
+    </message>
+
+    <message name="sumarResponse">
+        <part name="parameters" element="tns:sumarResponse"/>
+    </message>
+
+    <message name="restarRequest">
+        <part name="parameters" element="tns:restar"/>
+    </message>
+
+    <message name="restarResponse">
+        <part name="parameters" element="tns:restarResponse"/>
+    </message>
+
+    <portType name="CalculadoraSOAPPortType">
+        <operation name="sumar">
+            <input message="tns:sumarRequest"/>
+            <output message="tns:sumarResponse"/>
+        </operation>
+
+        <operation name="restar">
+            <input message="tns:restarRequest"/>
+            <output message="tns:restarResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="CalculadoraSOAPBinding" type="tns:CalculadoraSOAPPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="sumar">
+            <soap:operation soapAction="urn:CalculadoraSOAP#sumar"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
+        <operation name="restar">
+            <soap:operation soapAction="urn:CalculadoraSOAP#restar"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="CalculadoraSOAPService">
+        <port name="CalculadoraSOAPPort" binding="tns:CalculadoraSOAPBinding">
+            <soap:address location="http://localhost/daw2servidor\007-Programación de servicios web\002-Estándares y arquitecturas actuales. Formatos de intercambio de datos\002-Ejercicios/calculadora-soap.php"/>
+        </port>
+    </service>
+</definitions>
