@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    name="ServicioEnvioPostal"
+    targetNamespace="urn:ServicioEnvioPostal"
+    xmlns:tns="urn:ServicioEnvioPostal"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema targetNamespace="urn:ServicioEnvioPostal">
+
+            <xsd:element name="calcularEnvio">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="peso" type="xsd:double"/>
+                        <xsd:element name="zona" type="xsd:string"/>
+                        <xsd:element name="urgente" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="calcularEnvioResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="precio" type="xsd:double"/>
+                        <xsd:element name="plazoDias" type="xsd:int"/>
+                        <xsd:element name="zona" type="xsd:string"/>
+                        <xsd:element name="urgente" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <message name="calcularEnvioRequest">
+        <part name="parameters" element="tns:calcularEnvio"/>
+    </message>
+
+    <message name="calcularEnvioResponse">
+        <part name="parameters" element="tns:calcularEnvioResponse"/>
+    </message>
+
+    <portType name="ServicioEnvioPostalPortType">
+        <operation name="calcularEnvio">
+            <input message="tns:calcularEnvioRequest"/>
+            <output message="tns:calcularEnvioResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="ServicioEnvioPostalBinding" type="tns:ServicioEnvioPostalPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="calcularEnvio">
+            <soap:operation soapAction="urn:ServicioEnvioPostal#calcularEnvio"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="ServicioEnvioPostalService">
+        <port name="ServicioEnvioPostalPort" binding="tns:ServicioEnvioPostalBinding">
+            <soap:address location="http://localhost/TU_CARPETA/envio-postal-soap.php"/>
+        </port>
+    </service>
+</definitions>

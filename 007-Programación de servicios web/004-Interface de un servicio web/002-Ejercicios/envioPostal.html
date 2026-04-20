@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculador de envío postal SOAP</title>
+</head>
+<body>
+
+    <h1>Calculador de envío postal SOAP</h1>
+
+    <p>
+        Este ejemplo envía una petición SOAP en XML a un servidor PHP usando HTTP POST.
+    </p>
+
+    <label for="peso">Peso del paquete (kg):</label><br>
+    <input type="number" id="peso" step="0.1" min="0" value="2.5">
+    <br><br>
+
+    <label for="zona">Zona de envío:</label><br>
+    <select id="zona">
+        <option value="peninsula">Península</option>
+        <option value="baleares">Baleares</option>
+        <option value="canarias">Canarias</option>
+        <option value="internacional">Internacional</option>
+    </select>
+    <br><br>
+
+    <label>
+        <input type="checkbox" id="urgente">
+        Envío urgente
+    </label>
+    <br><br>
+
+    <button id="btnEnviar">Enviar petición SOAP</button>
+    <br><br>
+
+    <p>
+        <a href="envio-postal.wsdl" target="_blank">Ver WSDL del servicio</a>
+    </p>
+
+    <h2>Petición SOAP enviada</h2>
+    <pre id="peticion"></pre>
+
+    <h2>Respuesta SOAP recibida</h2>
+    <pre id="respuesta"></pre>
+
+    <h2>Resultado interpretado</h2>
+    <p id="resultado"></p>
+
+    <script>
+        document.getElementById("btnEnviar").addEventListener("click", async () => {
+            const peso = document.getElementById("peso").value;
+            const zona = document.getElementById("zona").value;
+            const urgente = document.getElementById("urgente").checked ? "true" : "false";
+
+            const requestId = "REQ-" + Date.now();
+
+            const xmlSOAP =
+                `<?xml version="1.0" encoding="UTF-8"?>
+                <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap:Header>
+                    <clienteInfo>
+                    <aplicacion>DAW2</aplicacion>
+                    <requestId>${requestId}</requestId>
+                    </clienteInfo>
+                </soap:Header>
+                <soap:Body>
+                    <calcularEnvio>
+                    <peso>${peso}</peso>
+                    <zona>${zona}</zona>
+                    <urgente>${urgente}</urgente>
+                    </calcularEnvio>
+                </soap:Body>
+                </soap:Envelope>`;
+
+            document.getElementById("peticion").innerText = xmlSOAP;
+            document.getElementById("respuesta").innerText = "Enviando...";
+            document.getElementById("resultado").innerText = "";
+
+            try {
+                const respuesta = await fetch("envioPostal.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/xml; charset=utf-8",
+                        "Accept": "text/xml"
+                    },
+                    body: xmlSOAP
+                });
+
+                const textoRespuesta = await respuesta.text();
+                document.getElementById("respuesta").innerText = textoRespuesta;
+
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(textoRespuesta, "text/xml");
+
+                const fault = xml.getElementsByTagName("faultstring")[0];
+
+                if (fault) {
+                    document.getElementById("resultado").innerText =
+                        "Error SOAP: " + fault.textContent;
+                    return;
+                }
+
+                const precioNode = xml.getElementsByTagName("precio")[0];
+                const plazoNode = xml.getElementsByTagName("plazoDias")[0];
+                const zonaNode = xml.getElementsByTagName("zona")[0];
+                const urgenteNode = xml.getElementsByTagName("urgente")[0];
+                const requestIdNode = xml.getElementsByTagName("requestId")[0];
+
+                if (precioNode && plazoNode && zonaNode && urgenteNode) {
+                    let texto = "";
+                    texto += "Zona: " + zonaNode.textContent + "\n";
+                    texto += "Urgente: " + urgenteNode.textContent + "\n";
+                    texto += "Precio final: " + precioNode.textContent + " €\n";
+                    texto += "Plazo estimado: " + plazoNode.textContent + " día(s)";
+
+                    if (requestIdNode) {
+                        texto += "\nRequestId devuelto: " + requestIdNode.textContent;
+                    }
+
+                    document.getElementById("resultado").innerText = texto;
+                } else {
+                    document.getElementById("resultado").innerText =
+                        "No se pudo interpretar la respuesta SOAP.";
+                }
+
+            } catch (error) {
+                document.getElementById("respuesta").innerText = "Error de red";
+                document.getElementById("resultado").innerText = String(error);
+            }
+        });
+    </script>
+
+</body>
+</html>

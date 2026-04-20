@@ -1,0 +1,6 @@
+Genera un servicio de validación de acceso a examen:
+	- Comunicación con SOAP completo
+	- El servicio recibirá nombre, edad y si está matriculado
+	- El servicio devolverá si está permitido y un mensaje explicativo
+		- Un alumno está permitido si tiene más de 16 y está matriculado
+	- Necesaria validación de campos recibidos y mensaje de error
