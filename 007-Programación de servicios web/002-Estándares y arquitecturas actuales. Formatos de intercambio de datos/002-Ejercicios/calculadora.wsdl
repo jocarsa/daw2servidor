@@ -101,7 +101,7 @@
 
     <service name="CalculadoraSOAPService">
         <port name="CalculadoraSOAPPort" binding="tns:CalculadoraSOAPBinding">
-            <soap:address location="http://localhost/daw2servidor\007-Programación de servicios web\002-Estándares y arquitecturas actuales. Formatos de intercambio de datos\002-Ejercicios/calculadora-soap.php"/>
+            <soap:address location="http://localhost/daw2servidor/007-Programación de servicios web/002-Estándares y arquitecturas actuales. Formatos de intercambio de datos/002-Ejercicios/calculadora-soap.php"/>
         </port>
     </service>
 </definitions>

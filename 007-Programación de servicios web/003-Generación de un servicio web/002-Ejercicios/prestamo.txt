@@ -1,0 +1,2 @@
+Genera un servicio web y un cliente que lo consuma a partir del wsdl de préstamo
+	- Incorpora cabeceras de sesión en el SOAP

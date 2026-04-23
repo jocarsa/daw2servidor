@@ -65,7 +65,7 @@
 
     <service name="ServicioEnvioPostalService">
         <port name="ServicioEnvioPostalPort" binding="tns:ServicioEnvioPostalBinding">
-            <soap:address location="http://localhost/TU_CARPETA/envio-postal-soap.php"/>
+            <soap:address location="http://localhost/daw2servidor/007-Programación de servicios web/004-Interface de un servicio web/002-Ejercicios/envioPostal.php/envio-postal-soap.php"/>
         </port>
     </service>
 </definitions>

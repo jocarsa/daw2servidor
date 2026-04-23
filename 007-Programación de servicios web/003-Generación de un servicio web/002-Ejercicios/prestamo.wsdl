@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    name="ServicioBiblioteca"
+    targetNamespace="urn:ServicioBiblioteca"
+    xmlns:tns="urn:ServicioBiblioteca"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema targetNamespace="urn:ServicioBiblioteca">
+
+            <xsd:element name="consultarPrestamo">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="dni" type="xsd:string"/>
+                        <xsd:element name="codigoLibro" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="consultarPrestamoResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="puede_prestar" type="xsd:boolean"/>
+                        <xsd:element name="mensaje" type="xsd:string"/>
+                        <xsd:element name="dias_maximos" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <message name="consultarPrestamoRequest">
+        <part name="parameters" element="tns:consultarPrestamo"/>
+    </message>
+
+    <message name="consultarPrestamoResponse">
+        <part name="parameters" element="tns:consultarPrestamoResponse"/>
+    </message>
+
+    <portType name="ServicioBibliotecaPortType">
+        <operation name="consultarPrestamo">
+            <input message="tns:consultarPrestamoRequest"/>
+            <output message="tns:consultarPrestamoResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="ServicioBibliotecaBinding" type="tns:ServicioBibliotecaPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="consultarPrestamo">
+            <soap:operation soapAction="urn:ServicioBiblioteca#consultarPrestamo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="ServicioBibliotecaService">
+        <port name="ServicioBibliotecaPort" binding="tns:ServicioBibliotecaBinding">
+            <soap:address location="http://localhost/TU_CARPETA/servicio-biblioteca.php"/>
+        </port>
+    </service>
+
+</definitions>
