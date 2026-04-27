@@ -1,0 +1,14 @@
+Genera un servicio web que maneje tareas. El servicio permite:
+	- Consultar todas las tareas
+	- Consultar una tarea en concreto
+	- Añadir una tarea
+	- Actualizar una tarea
+	- Eliminar una tarea
+
+La estructura de las tareas es:
+	- ID
+	- Título
+	- Descripción
+	- Completada
+	- Prioridad
+	- Fecha de creación

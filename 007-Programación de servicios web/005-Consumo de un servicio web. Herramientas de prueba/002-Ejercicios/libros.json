@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "titulo": "El Quijote",
+        "autor": "Miguel de Cervantes",
+        "disponible": true
+    },
+    {
+        "id": 2,
+        "titulo": "La sombra del viento",
+        "autor": "Carlos Ruiz Zafón",
+        "disponible": false
+    },
+    {
+        "id": 3,
+        "titulo": "Cien años de soledad",
+        "autor": "Gabriel García Márquez",
+        "disponible": true
+    }
+]

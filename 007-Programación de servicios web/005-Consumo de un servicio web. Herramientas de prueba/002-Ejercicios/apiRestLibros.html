@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cliente REST Biblioteca</title>
+</head>
+<body>
+
+<h1>Cliente REST - Biblioteca</h1>
+
+<h2>1. Listar libros</h2>
+<button id="btnListar">GET /libros</button>
+
+<hr>
+
+<h2>2. Consultar libro por ID</h2>
+<label>ID:</label><br>
+<input type="number" id="idConsultar" value="1"><br><br>
+<button id="btnConsultar">GET /libros/{id}</button>
+
+<hr>
+
+<h2>3. Crear libro</h2>
+<label>Título:</label><br>
+<input type="text" id="tituloCrear" value="Nuevo libro"><br><br>
+
+<label>Autor:</label><br>
+<input type="text" id="autorCrear" value="Autor de prueba"><br><br>
+
+<label>
+    <input type="checkbox" id="disponibleCrear" checked>
+    Disponible
+</label><br><br>
+
+<button id="btnCrear">POST /libros</button>
+
+<hr>
+
+<h2>4. Cambiar disponibilidad</h2>
+<label>ID:</label><br>
+<input type="number" id="idPatch" value="1"><br><br>
+
+<label>
+    <input type="checkbox" id="disponiblePatch">
+    Disponible
+</label><br><br>
+
+<button id="btnPatch">PATCH /libros/{id}</button>
+
+<hr>
+
+<h2>5. Eliminar libro</h2>
+<label>ID:</label><br>
+<input type="number" id="idEliminar" value="1"><br><br>
+<button id="btnEliminar">DELETE /libros/{id}</button>
+
+<hr>
+
+<h2>Petición realizada</h2>
+<pre id="peticion"></pre>
+
+<h2>Respuesta del servidor</h2>
+<pre id="respuesta"></pre>
+
+<script>
+const baseUrl = "apiRestLibros.php";
+
+const peticion = document.getElementById("peticion");
+const respuesta = document.getElementById("respuesta");
+
+function mostrarPeticion(metodo, url, body = null) {
+    let texto = metodo + " " + url;
+
+    if (body !== null) {
+        texto += "\n\nBody:\n" + JSON.stringify(body, null, 2);
+    }
+
+    peticion.innerText = texto;
+}
+
+async function mostrarRespuesta(resp) {
+    const texto = await resp.text();
+
+    respuesta.innerText =
+        "Código HTTP: " + resp.status + "\n\n" +
+        (texto || "Sin cuerpo de respuesta");
+}
+
+// ----------------------------------------------------
+// GET /libros
+// ----------------------------------------------------
+document.getElementById("btnListar").addEventListener("click", async () => {
+    const url = baseUrl + "/libros";
+
+    mostrarPeticion("GET", url);
+
+    const resp = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// GET /libros/{id}
+// ----------------------------------------------------
+document.getElementById("btnConsultar").addEventListener("click", async () => {
+    const id = document.getElementById("idConsultar").value;
+    const url = baseUrl + "/libros/" + encodeURIComponent(id);
+
+    mostrarPeticion("GET", url);
+
+    const resp = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// POST /libros
+// ----------------------------------------------------
+document.getElementById("btnCrear").addEventListener("click", async () => {
+    const url = baseUrl + "/libros";
+
+    const body = {
+        titulo: document.getElementById("tituloCrear").value,
+        autor: document.getElementById("autorCrear").value,
+        disponible: document.getElementById("disponibleCrear").checked
+    };
+
+    mostrarPeticion("POST", url, body);
+
+    const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// PATCH /libros/{id}
+// ----------------------------------------------------
+document.getElementById("btnPatch").addEventListener("click", async () => {
+    const id = document.getElementById("idPatch").value;
+    const url = baseUrl + "/libros/" + encodeURIComponent(id);
+
+    const body = {
+        disponible: document.getElementById("disponiblePatch").checked
+    };
+
+    mostrarPeticion("PATCH", url, body);
+
+    const resp = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// DELETE /libros/{id}
+// ----------------------------------------------------
+document.getElementById("btnEliminar").addEventListener("click", async () => {
+    const id = document.getElementById("idEliminar").value;
+    const url = baseUrl + "/libros/" + encodeURIComponent(id);
+
+    mostrarPeticion("DELETE", url);
+
+    const resp = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    await mostrarRespuesta(resp);
+});
+</script>
+
+</body>
+</html>

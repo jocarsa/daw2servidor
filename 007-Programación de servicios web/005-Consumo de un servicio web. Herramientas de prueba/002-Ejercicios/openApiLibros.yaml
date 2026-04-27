@@ -1,0 +1,191 @@
+openapi: 3.0.3
+
+info:
+  title: API REST Biblioteca
+  version: 1.0.0
+  description: API REST sencilla para consultar, crear, modificar y eliminar libros.
+
+servers:
+  - url: http://localhost/daw2servidor/007-Programación de servicios web/005-Consumo de un servicio web. Herramientas de prueba/002-Ejercicios/apiRestLibros.php
+    description: Servidor local XAMPP
+
+paths:
+  /libros:
+    get:
+      summary: Listar libros
+      description: Devuelve todos los libros disponibles en el sistema.
+      operationId: listarLibros
+      responses:
+        "200":
+          description: Listado de libros obtenido correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 3
+                  libros:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Libro"
+
+    post:
+      summary: Crear libro
+      description: Crea un nuevo libro.
+      operationId: crearLibro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LibroEntrada"
+      responses:
+        "201":
+          description: Libro creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Libro"
+        "400":
+          description: Datos incorrectos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /libros/{id}:
+    get:
+      summary: Consultar libro por ID
+      description: Devuelve un libro concreto a partir de su identificador.
+      operationId: consultarLibro
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del libro
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Libro encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Libro"
+        "404":
+          description: Libro no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    patch:
+      summary: Actualizar parcialmente un libro
+      description: Permite modificar uno o varios campos de un libro.
+      operationId: actualizarLibroParcial
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del libro
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LibroParcial"
+      responses:
+        "200":
+          description: Libro actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Libro"
+        "404":
+          description: Libro no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Eliminar libro
+      description: Elimina un libro por su identificador.
+      operationId: eliminarLibro
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del libro
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "204":
+          description: Libro eliminado correctamente
+        "404":
+          description: Libro no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Libro:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        titulo:
+          type: string
+          example: El Quijote
+        autor:
+          type: string
+          example: Miguel de Cervantes
+        disponible:
+          type: boolean
+          example: true
+
+    LibroEntrada:
+      type: object
+      required:
+        - titulo
+        - autor
+      properties:
+        titulo:
+          type: string
+          example: El Quijote
+        autor:
+          type: string
+          example: Miguel de Cervantes
+        disponible:
+          type: boolean
+          example: true
+
+    LibroParcial:
+      type: object
+      properties:
+        titulo:
+          type: string
+          example: Nuevo título
+        autor:
+          type: string
+          example: Nuevo autor
+        disponible:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Libro no encontrado
