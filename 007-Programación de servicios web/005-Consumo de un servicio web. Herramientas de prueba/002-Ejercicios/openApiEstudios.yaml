@@ -1,0 +1,324 @@
+openapi: 3.0.3
+
+info:
+  title: API REST Estudios
+  version: 1.0.0
+  description: API REST sencilla para consultar, crear, modificar y eliminar estudios de videojuegos.
+
+servers:
+  - url: http://localhost/TU_CARPETA/apiEstudios.php
+    description: Servidor local XAMPP
+
+paths:
+  /estudios:
+    get:
+      summary: Listar estudios
+      description: Devuelve una lista de estudios. Permite filtrar opcionalmente por país, ciudad o estado activo.
+      operationId: listarEstudios
+      parameters:
+        - name: pais
+          in: query
+          required: false
+          description: Filtra estudios por país.
+          schema:
+            type: string
+            example: España
+
+        - name: ciudad
+          in: query
+          required: false
+          description: Filtra estudios por ciudad.
+          schema:
+            type: string
+            example: Valencia
+
+        - name: activo
+          in: query
+          required: false
+          description: Filtra estudios activos o inactivos.
+          schema:
+            type: boolean
+            example: true
+
+      responses:
+        "200":
+          description: Listado de estudios obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 3
+                  estudios:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Estudio"
+
+        "400":
+          description: Parámetros de filtro incorrectos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Crear estudio
+      description: Crea un nuevo estudio en la base de datos.
+      operationId: crearEstudio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstudioEntrada"
+
+      responses:
+        "201":
+          description: Estudio creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Estudio"
+
+        "400":
+          description: Datos incorrectos o incompletos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /estudios/{id}:
+    get:
+      summary: Consultar estudio por ID
+      description: Devuelve un estudio concreto a partir de su identificador.
+      operationId: consultarEstudio
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del estudio.
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "200":
+          description: Estudio encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Estudio"
+
+        "400":
+          description: ID incorrecto.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "404":
+          description: Estudio no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    patch:
+      summary: Actualizar parcialmente un estudio
+      description: Permite modificar uno o varios campos de un estudio.
+      operationId: actualizarEstudioParcial
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del estudio.
+          schema:
+            type: integer
+            example: 1
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstudioParcial"
+
+      responses:
+        "200":
+          description: Estudio actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Estudio"
+
+        "400":
+          description: Datos incorrectos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "404":
+          description: Estudio no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Eliminar estudio
+      description: Elimina un estudio por su identificador.
+      operationId: eliminarEstudio
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del estudio.
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "204":
+          description: Estudio eliminado correctamente. No se devuelve cuerpo.
+
+        "400":
+          description: ID incorrecto.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "404":
+          description: Estudio no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "409":
+          description: Conflicto al eliminar el estudio por estar relacionado con otros datos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Estudio:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Nintendo EPD
+        pais:
+          type: string
+          nullable: true
+          example: Japón
+        ciudad:
+          type: string
+          nullable: true
+          example: Kioto
+        fecha_fundacion:
+          type: string
+          nullable: true
+          example: "1983-09-30"
+        activo:
+          type: boolean
+          example: true
+
+    EstudioEntrada:
+      type: object
+      required:
+        - nombre
+      properties:
+        nombre:
+          type: string
+          example: Estudio de prueba REST
+        pais:
+          type: string
+          nullable: true
+          example: España
+        ciudad:
+          type: string
+          nullable: true
+          example: Valencia
+        fecha_fundacion:
+          type: string
+          nullable: true
+          example: "2020-01-15"
+        activo:
+          type: boolean
+          example: true
+
+    EstudioParcial:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Nuevo nombre del estudio
+        pais:
+          type: string
+          nullable: true
+          example: España
+        ciudad:
+          type: string
+          nullable: true
+          example: Madrid
+        fecha_fundacion:
+          type: string
+          nullable: true
+          example: "2021-06-10"
+        activo:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Estudio no encontrado
+        detalle:
+          type: string
+          example: Información técnica opcional del error

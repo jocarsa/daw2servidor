@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cliente REST Videojuegos</title>
+</head>
+<body>
+
+<h1>Cliente REST - Videojuegos</h1>
+
+<h2>1. Listar videojuegos</h2>
+
+<label>Precio máximo:</label><br>
+<input type="number" id="precioMax" step="0.01" value="60"><br><br>
+
+<label>PEGI máximo:</label><br>
+<input type="number" id="pegiMax" value="18"><br><br>
+
+<label>
+    <input type="checkbox" id="usarFiltroMultijugador">
+    Filtrar por multijugador
+</label><br>
+
+<label>
+    <input type="checkbox" id="multijugador">
+    Multijugador
+</label><br><br>
+
+<button id="btnListar">GET /videojuegos</button>
+
+<hr>
+
+<h2>2. Consultar videojuego por ID</h2>
+<label>ID:</label><br>
+<input type="number" id="idConsultar" value="1"><br><br>
+<button id="btnConsultar">GET /videojuegos/{id}</button>
+
+<hr>
+
+<h2>3. Crear videojuego</h2>
+
+<label>Título:</label><br>
+<input type="text" id="tituloCrear" value="Juego de prueba REST"><br><br>
+
+<label>Fecha lanzamiento:</label><br>
+<input type="text" id="fechaCrear" placeholder="2026-05-10"><br><br>
+
+<label>PEGI:</label><br>
+<input type="number" id="pegiCrear" value="12"><br><br>
+
+<label>Precio base:</label><br>
+<input type="number" id="precioCrear" step="0.01" value="29.99"><br><br>
+
+<label>Motor:</label><br>
+<input type="text" id="motorCrear" value="Motor REST"><br><br>
+
+<label>
+    <input type="checkbox" id="multiCrear">
+    Es multijugador
+</label><br><br>
+
+<button id="btnCrear">POST /videojuegos</button>
+
+<hr>
+
+<h2>4. Actualizar parcialmente videojuego</h2>
+
+<label>ID:</label><br>
+<input type="number" id="idPatch" value="1"><br><br>
+
+<label>Nuevo precio base:</label><br>
+<input type="number" id="precioPatch" step="0.01" value="19.99"><br><br>
+
+<label>
+    <input type="checkbox" id="multiPatch">
+    Es multijugador
+</label><br><br>
+
+<button id="btnPatch">PATCH /videojuegos/{id}</button>
+
+<hr>
+
+<h2>5. Eliminar videojuego</h2>
+<p>Recomendado: eliminar solo videojuegos creados durante la prueba.</p>
+
+<label>ID:</label><br>
+<input type="number" id="idEliminar"><br><br>
+
+<button id="btnEliminar">DELETE /videojuegos/{id}</button>
+
+<hr>
+
+<h2>Petición realizada</h2>
+<pre id="peticion"></pre>
+
+<h2>Respuesta del servidor</h2>
+<pre id="respuesta"></pre>
+
+<script>
+const baseUrl = "apiVideojuegos.php";
+
+const peticion = document.getElementById("peticion");
+const respuesta = document.getElementById("respuesta");
+
+function mostrarPeticion(metodo, url, body = null) {
+    let texto = metodo + " " + url;
+
+    if (body !== null) {
+        texto += "\n\nBody:\n" + JSON.stringify(body, null, 2);
+    }
+
+    peticion.innerText = texto;
+}
+
+async function mostrarRespuesta(resp) {
+    const texto = await resp.text();
+
+    respuesta.innerText =
+        "Código HTTP: " + resp.status + "\n\n" +
+        (texto || "Sin cuerpo de respuesta");
+}
+
+// ----------------------------------------------------
+// GET /videojuegos
+// ----------------------------------------------------
+document.getElementById("btnListar").addEventListener("click", async () => {
+    let url = baseUrl + "/videojuegos";
+
+    const parametros = new URLSearchParams();
+
+    const precioMax = document.getElementById("precioMax").value;
+    const pegiMax = document.getElementById("pegiMax").value;
+
+    if (precioMax !== "") {
+        parametros.append("precioMax", precioMax);
+    }
+
+    if (pegiMax !== "") {
+        parametros.append("pegiMax", pegiMax);
+    }
+
+    if (document.getElementById("usarFiltroMultijugador").checked) {
+        parametros.append("multijugador", document.getElementById("multijugador").checked ? "true" : "false");
+    }
+
+    if (parametros.toString() !== "") {
+        url += "?" + parametros.toString();
+    }
+
+    mostrarPeticion("GET", url);
+
+    const resp = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// GET /videojuegos/{id}
+// ----------------------------------------------------
+document.getElementById("btnConsultar").addEventListener("click", async () => {
+    const id = document.getElementById("idConsultar").value;
+    const url = baseUrl + "/videojuegos/" + encodeURIComponent(id);
+
+    mostrarPeticion("GET", url);
+
+    const resp = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// POST /videojuegos
+// ----------------------------------------------------
+document.getElementById("btnCrear").addEventListener("click", async () => {
+    const url = baseUrl + "/videojuegos";
+
+    const body = {
+        titulo: document.getElementById("tituloCrear").value,
+        fecha_lanzamiento: document.getElementById("fechaCrear").value,
+        pegi: parseInt(document.getElementById("pegiCrear").value),
+        precio_base: parseFloat(document.getElementById("precioCrear").value),
+        motor: document.getElementById("motorCrear").value,
+        es_multijugador: document.getElementById("multiCrear").checked
+    };
+
+    mostrarPeticion("POST", url, body);
+
+    const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// PATCH /videojuegos/{id}
+// ----------------------------------------------------
+document.getElementById("btnPatch").addEventListener("click", async () => {
+    const id = document.getElementById("idPatch").value;
+    const url = baseUrl + "/videojuegos/" + encodeURIComponent(id);
+
+    const body = {
+        precio_base: parseFloat(document.getElementById("precioPatch").value),
+        es_multijugador: document.getElementById("multiPatch").checked
+    };
+
+    mostrarPeticion("PATCH", url, body);
+
+    const resp = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    await mostrarRespuesta(resp);
+});
+
+// ----------------------------------------------------
+// DELETE /videojuegos/{id}
+// ----------------------------------------------------
+document.getElementById("btnEliminar").addEventListener("click", async () => {
+    const id = document.getElementById("idEliminar").value;
+    const url = baseUrl + "/videojuegos/" + encodeURIComponent(id);
+
+    mostrarPeticion("DELETE", url);
+
+    const resp = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    await mostrarRespuesta(resp);
+});
+</script>
+
+</body>
+</html>

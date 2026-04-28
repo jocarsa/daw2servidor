@@ -1,0 +1,2 @@
+Genera un servicio de estudios y una cliente que consuma estos servicios a partir de la especificación dada en "openApiEstudios.yaml"
+	- El servicio tiene que consumir datos de nuestra base MySQL

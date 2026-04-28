@@ -1,0 +1,322 @@
+openapi: 3.0.3
+
+info:
+  title: API REST Videojuegos
+  version: 1.0.0
+  description: API REST sencilla para consultar, crear, modificar y eliminar videojuegos de la base videojuegos_asir.
+
+servers:
+  - url: http://localhost/daw2servidor/007-Programación de servicios web/005-Consumo de un servicio web. Herramientas de prueba/002-Ejercicios//apiVideojuegos.php
+    description: Servidor local XAMPP
+
+paths:
+  /videojuegos:
+    get:
+      summary: Listar videojuegos
+      description: Devuelve una lista de videojuegos. Permite filtros opcionales por precio máximo, PEGI máximo y multijugador.
+      operationId: listarVideojuegos
+      parameters:
+        - name: precioMax
+          in: query
+          required: false
+          description: Precio máximo del videojuego.
+          schema:
+            type: number
+            format: float
+            example: 60
+        - name: pegiMax
+          in: query
+          required: false
+          description: PEGI máximo permitido.
+          schema:
+            type: integer
+            example: 16
+        - name: multijugador
+          in: query
+          required: false
+          description: Filtra videojuegos multijugador o no multijugador.
+          schema:
+            type: boolean
+            example: true
+      responses:
+        "200":
+          description: Listado de videojuegos obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 3
+                  videojuegos:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Videojuego"
+        "400":
+          description: Filtros incorrectos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Crear videojuego
+      description: Crea un nuevo videojuego en la base de datos.
+      operationId: crearVideojuego
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideojuegoEntrada"
+      responses:
+        "201":
+          description: Videojuego creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Videojuego"
+        "400":
+          description: Datos incorrectos o incompletos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /videojuegos/{id}:
+    get:
+      summary: Consultar videojuego por ID
+      description: Devuelve un videojuego concreto a partir de su identificador.
+      operationId: consultarVideojuego
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del videojuego.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Videojuego encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Videojuego"
+        "400":
+          description: ID incorrecto.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Videojuego no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    patch:
+      summary: Actualizar parcialmente un videojuego
+      description: Permite modificar uno o varios campos de un videojuego.
+      operationId: actualizarVideojuegoParcial
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del videojuego.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideojuegoParcial"
+      responses:
+        "200":
+          description: Videojuego actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Videojuego"
+        "400":
+          description: Datos incorrectos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Videojuego no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Eliminar videojuego
+      description: Elimina un videojuego por su identificador.
+      operationId: eliminarVideojuego
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del videojuego.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "204":
+          description: Videojuego eliminado correctamente. No se devuelve cuerpo.
+        "400":
+          description: ID incorrecto.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Videojuego no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Conflicto al eliminar el videojuego por relaciones con otros datos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Videojuego:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        titulo:
+          type: string
+          example: Baldur's Gate 3
+        fecha_lanzamiento:
+          type: string
+          nullable: true
+          example: "2023-08-03"
+        pegi:
+          type: integer
+          nullable: true
+          example: 18
+        precio_base:
+          type: number
+          format: float
+          nullable: true
+          example: 59.99
+        motor:
+          type: string
+          nullable: true
+          example: Divinity Engine
+        es_multijugador:
+          type: boolean
+          example: true
+        estudio:
+          type: string
+          nullable: true
+          example: Larian Studios
+
+    VideojuegoEntrada:
+      type: object
+      required:
+        - titulo
+      properties:
+        titulo:
+          type: string
+          example: Juego de prueba REST
+        fecha_lanzamiento:
+          type: string
+          nullable: true
+          example: "2026-05-10"
+        pegi:
+          type: integer
+          nullable: true
+          example: 12
+        precio_base:
+          type: number
+          format: float
+          nullable: true
+          example: 29.99
+        motor:
+          type: string
+          nullable: true
+          example: Motor REST
+        es_multijugador:
+          type: boolean
+          example: false
+
+    VideojuegoParcial:
+      type: object
+      properties:
+        titulo:
+          type: string
+          example: Nuevo título
+        fecha_lanzamiento:
+          type: string
+          nullable: true
+          example: "2026-05-10"
+        pegi:
+          type: integer
+          nullable: true
+          example: 16
+        precio_base:
+          type: number
+          format: float
+          nullable: true
+          example: 19.99
+        motor:
+          type: string
+          nullable: true
+          example: Nuevo motor
+        es_multijugador:
+          type: boolean
+          example: true
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Videojuego no encontrado
+        detalle:
+          type: string
+          example: Información técnica opcional del error
