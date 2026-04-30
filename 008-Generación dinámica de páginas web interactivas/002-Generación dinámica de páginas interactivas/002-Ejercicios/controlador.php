@@ -5,11 +5,11 @@ header("Content-Type: application/json; charset=utf-8");
 // Mapa de servicios permitidos
 $servicios = [
     "videojuegos" => [
-        "archivo" => "servicios/servicio_videojuegos.php",
+        "archivo" => "servicios/servicioVideojuegos.php",
         "funcion" => "servicioVideojuegos"
     ],
     "alumnos" => [
-        "archivo" => "servicios/servicio_alumnos.php",
+        "archivo" => "servicios/servicioAlumnos.php",
         "funcion" => "servicioAlumnos"
     ]
 ];
