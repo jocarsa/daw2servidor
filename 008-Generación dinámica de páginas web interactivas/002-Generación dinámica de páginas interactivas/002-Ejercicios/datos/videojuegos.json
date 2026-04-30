@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "titulo": "The Legend of Zelda",
+        "genero": "Aventura"
+    },
+    {
+        "id": 2,
+        "titulo": "Mario Kart",
+        "genero": "Carreras"
+    },
+    {
+        "id": 3,
+        "titulo": "Kingdom Hearts",
+        "genero": "Aventura"
+    },
+    {
+        "id": 4,
+        "titulo": "Mortal Kombat",
+        "genero": "Lucha"
+    }
+]

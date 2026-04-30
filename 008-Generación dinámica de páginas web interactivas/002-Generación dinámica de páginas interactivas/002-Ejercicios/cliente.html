@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cliente REST - Mini servicios</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        section {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        input, button {
+            margin: 5px 0;
+            padding: 6px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .ok {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cliente REST para controlador PHP</h1>
+
+    <section>
+        <h2>Videojuegos</h2>
+
+        <button id="btnCargarVideojuegos">Cargar videojuegos</button>
+
+        <h3>Añadir videojuego</h3>
+
+        <form id="formVideojuego">
+            <div>
+                <label for="tituloVideojuego">Título:</label><br>
+                <input type="text" id="tituloVideojuego" name="titulo">
+            </div>
+
+            <div>
+                <label for="generoVideojuego">Género:</label><br>
+                <input type="text" id="generoVideojuego" name="genero">
+            </div>
+
+            <button type="submit">Añadir videojuego</button>
+        </form>
+
+        <h3>Listado de videojuegos</h3>
+        <div id="listadoVideojuegos"></div>
+
+        <p id="mensajeVideojuegos"></p>
+    </section>
+
+    <section>
+        <h2>Alumnos</h2>
+
+        <button id="btnCargarAlumnos">Cargar alumnos</button>
+
+        <h3>Añadir alumno</h3>
+
+        <form id="formAlumno">
+            <div>
+                <label for="nombreAlumno">Nombre:</label><br>
+                <input type="text" id="nombreAlumno" name="nombre">
+            </div>
+
+            <div>
+                <label for="cursoAlumno">Curso:</label><br>
+                <input type="text" id="cursoAlumno" name="curso">
+            </div>
+
+            <button type="submit">Añadir alumno</button>
+        </form>
+
+        <h3>Listado de alumnos</h3>
+        <div id="listadoAlumnos"></div>
+
+        <p id="mensajeAlumnos"></p>
+    </section>
+
+    <script>
+        const API_VIDEOJUEGOS = "controlador.php/videojuegos";
+        const API_ALUMNOS = "controlador.php/alumnos";
+
+        const btnCargarVideojuegos = document.getElementById("btnCargarVideojuegos");
+        const btnCargarAlumnos = document.getElementById("btnCargarAlumnos");
+
+        const formVideojuego = document.getElementById("formVideojuego");
+        const formAlumno = document.getElementById("formAlumno");
+
+        const listadoVideojuegos = document.getElementById("listadoVideojuegos");
+        const listadoAlumnos = document.getElementById("listadoAlumnos");
+
+        const mensajeVideojuegos = document.getElementById("mensajeVideojuegos");
+        const mensajeAlumnos = document.getElementById("mensajeAlumnos");
+
+        btnCargarVideojuegos.addEventListener("click", cargarVideojuegos);
+        btnCargarAlumnos.addEventListener("click", cargarAlumnos);
+
+        formVideojuego.addEventListener("submit", function(event) {
+            event.preventDefault();
+            añadirVideojuego();
+        });
+
+        formAlumno.addEventListener("submit", function(event) {
+            event.preventDefault();
+            añadirAlumno();
+        });
+
+        function cargarVideojuegos() {
+            limpiarMensaje(mensajeVideojuegos);
+
+            fetch(API_VIDEOJUEGOS)
+                .then(function(respuesta) {
+                    return respuesta.json();
+                })
+                .then(function(videojuegos) {
+                    mostrarVideojuegos(videojuegos);
+                })
+                .catch(function(error) {
+                    mostrarMensaje(mensajeVideojuegos, "Error al cargar videojuegos", "error");
+                    console.log(error);
+                });
+        }
+
+        function cargarAlumnos() {
+            limpiarMensaje(mensajeAlumnos);
+
+            fetch(API_ALUMNOS)
+                .then(function(respuesta) {
+                    return respuesta.json();
+                })
+                .then(function(alumnos) {
+                    mostrarAlumnos(alumnos);
+                })
+                .catch(function(error) {
+                    mostrarMensaje(mensajeAlumnos, "Error al cargar alumnos", "error");
+                    console.log(error);
+                });
+        }
+
+        function añadirVideojuego() {
+            const titulo = document.getElementById("tituloVideojuego").value;
+            const genero = document.getElementById("generoVideojuego").value;
+
+            limpiarMensaje(mensajeVideojuegos);
+
+            fetch(API_VIDEOJUEGOS, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    titulo: titulo,
+                    genero: genero
+                })
+            })
+            .then(function(respuesta) {
+                return respuesta.json().then(function(datos) {
+                    return {
+                        codigo: respuesta.status,
+                        datos: datos
+                    };
+                });
+            })
+            .then(function(resultado) {
+                if (resultado.codigo === 201) {
+                    mostrarMensaje(mensajeVideojuegos, resultado.datos.mensaje, "ok");
+                    formVideojuego.reset();
+                    cargarVideojuegos();
+                } else {
+                    mostrarMensaje(mensajeVideojuegos, resultado.datos.error, "error");
+                }
+            })
+            .catch(function(error) {
+                mostrarMensaje(mensajeVideojuegos, "Error al añadir videojuego", "error");
+                console.log(error);
+            });
+        }
+
+        function añadirAlumno() {
+            const nombre = document.getElementById("nombreAlumno").value;
+            const curso = document.getElementById("cursoAlumno").value;
+
+            limpiarMensaje(mensajeAlumnos);
+
+            fetch(API_ALUMNOS, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    curso: curso
+                })
+            })
+            .then(function(respuesta) {
+                return respuesta.json().then(function(datos) {
+                    return {
+                        codigo: respuesta.status,
+                        datos: datos
+                    };
+                });
+            })
+            .then(function(resultado) {
+                if (resultado.codigo === 201) {
+                    mostrarMensaje(mensajeAlumnos, resultado.datos.mensaje, "ok");
+                    formAlumno.reset();
+                    cargarAlumnos();
+                } else {
+                    mostrarMensaje(mensajeAlumnos, resultado.datos.error, "error");
+                }
+            })
+            .catch(function(error) {
+                mostrarMensaje(mensajeAlumnos, "Error al añadir alumno", "error");
+                console.log(error);
+            });
+        }
+
+        function mostrarVideojuegos(videojuegos) {
+            listadoVideojuegos.innerHTML = "";
+
+            if (videojuegos.length === 0) {
+                listadoVideojuegos.innerHTML = "<p>No hay videojuegos almacenados.</p>";
+                return;
+            }
+
+            const ul = document.createElement("ul");
+
+            videojuegos.forEach(function(videojuego) {
+                const li = document.createElement("li");
+                li.textContent = videojuego.id + " - " + videojuego.titulo + " (" + videojuego.genero + ")";
+                ul.appendChild(li);
+            });
+
+            listadoVideojuegos.appendChild(ul);
+        }
+
+        function mostrarAlumnos(alumnos) {
+            listadoAlumnos.innerHTML = "";
+
+            if (alumnos.length === 0) {
+                listadoAlumnos.innerHTML = "<p>No hay alumnos almacenados.</p>";
+                return;
+            }
+
+            const ul = document.createElement("ul");
+
+            alumnos.forEach(function(alumno) {
+                const li = document.createElement("li");
+                li.textContent = alumno.id + " - " + alumno.nombre + " (" + alumno.curso + ")";
+                ul.appendChild(li);
+            });
+
+            listadoAlumnos.appendChild(ul);
+        }
+
+        function mostrarMensaje(elemento, texto, tipo) {
+            elemento.textContent = texto;
+            elemento.className = tipo;
+        }
+
+        function limpiarMensaje(elemento) {
+            elemento.textContent = "";
+            elemento.className = "";
+        }
+    </script>
+
+</body>
+</html>
