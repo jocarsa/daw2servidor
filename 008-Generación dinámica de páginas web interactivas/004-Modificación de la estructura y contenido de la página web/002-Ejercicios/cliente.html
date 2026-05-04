@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo interactivo independiente</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f4;
+        }
+
+        header,
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .descripcion {
+            color: #555;
+        }
+
+        .panel-filtros {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .fila-filtros {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select,
+        button {
+            padding: 8px;
+            min-width: 160px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #zona-catalogo {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            min-height: 160px;
+        }
+
+        .catalogo-tarjetas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .tarjeta {
+            border: 1px solid #ccc;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+
+        .tarjeta h3 {
+            margin-top: 0;
+        }
+
+        .precio {
+            font-weight: bold;
+        }
+
+        .tabla-catalogo {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tabla-catalogo th,
+        .tabla-catalogo td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .tabla-catalogo th {
+            background-color: #eee;
+        }
+
+        .mensaje {
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+        }
+
+        .cargando {
+            color: #666;
+            font-style: italic;
+        }
+
+        .error {
+            color: darkred;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Catálogo interactivo de videojuegos</h1>
+    <p class="descripcion">
+        Este cliente es HTML, CSS y JavaScript puro. Se conecta con PHP usando fetch().
+        PHP devuelve un fragmento HTML y JavaScript lo inserta en la página.
+    </p>
+</header>
+
+<main>
+
+    <section class="panel-filtros">
+        <h2>Filtros</h2>
+
+        <form id="formFiltros">
+            <div class="fila-filtros">
+
+                <div>
+                    <label for="genero">Género</label>
+                    <select id="genero" name="genero">
+                        <option value="">Todos</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Carreras">Carreras</option>
+                        <option value="Construcción">Construcción</option>
+                        <option value="Rol">Rol</option>
+                        <option value="Lucha">Lucha</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="orden">Ordenar por</label>
+                    <select id="orden" name="orden">
+                        <option value="titulo">Título</option>
+                        <option value="precio_asc">Precio ascendente</option>
+                        <option value="precio_desc">Precio descendente</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="vista">Vista</label>
+                    <select id="vista" name="vista">
+                        <option value="tarjetas">Tarjetas</option>
+                        <option value="tabla">Tabla</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit">Aplicar filtros</button>
+                </div>
+
+            </div>
+        </form>
+    </section>
+
+    <section id="zona-catalogo">
+        <p class="mensaje">
+            Pulsa “Aplicar filtros” para cargar el catálogo desde el servidor PHP.
+        </p>
+    </section>
+
+</main>
+
+<script>
+    const URL_CATALOGO = "servidor/catalogoFragmentos.php";
+
+    const formFiltros = document.getElementById("formFiltros");
+
+    const selectGenero = document.getElementById("genero");
+    const selectOrden = document.getElementById("orden");
+    const selectVista = document.getElementById("vista");
+
+    const zonaCatalogo = document.getElementById("zona-catalogo");
+
+    formFiltros.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        await cargarCatalogo();
+    });
+
+    selectGenero.addEventListener("change", async function() {
+        await cargarCatalogo();
+    });
+
+    selectOrden.addEventListener("change", async function() {
+        await cargarCatalogo();
+    });
+
+    selectVista.addEventListener("change", async function() {
+        await cargarCatalogo();
+    });
+
+    async function cargarCatalogo() {
+        const genero = selectGenero.value;
+        const orden = selectOrden.value;
+        const vista = selectVista.value;
+
+        const parametros = new URLSearchParams();
+
+        parametros.append("genero", genero);
+        parametros.append("orden", orden);
+        parametros.append("vista", vista);
+
+        const url = URL_CATALOGO + "?" + parametros.toString();
+
+        zonaCatalogo.innerHTML = '<p class="cargando">Cargando catálogo...</p>';
+
+        try {
+            const respuesta = await fetch(url);
+
+            if (!respuesta.ok) {
+                throw new Error("Error en la petición al servidor");
+            }
+
+            const html = await respuesta.text();
+
+            zonaCatalogo.innerHTML = html;
+
+        } catch (error) {
+            zonaCatalogo.innerHTML = '<p class="error">No se pudo cargar el catálogo.</p>';
+            console.log(error);
+        }
+    }
+</script>
+
+</body>
+</html>

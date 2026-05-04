@@ -1,0 +1,66 @@
+[
+    {
+        "id": 1,
+        "titulo": "The Legend of Zelda",
+        "genero": "Aventura",
+        "precio": 59.99,
+        "pegi": 12,
+        "multijugador": false
+    },
+    {
+        "id": 2,
+        "titulo": "Mario Kart",
+        "genero": "Carreras",
+        "precio": 39.99,
+        "pegi": 3,
+        "multijugador": true
+    },
+    {
+        "id": 3,
+        "titulo": "Minecraft",
+        "genero": "Construcción",
+        "precio": 24.99,
+        "pegi": 7,
+        "multijugador": true
+    },
+    {
+        "id": 4,
+        "titulo": "Final Fantasy VII",
+        "genero": "Rol",
+        "precio": 49.99,
+        "pegi": 16,
+        "multijugador": false
+    },
+    {
+        "id": 5,
+        "titulo": "Street Fighter",
+        "genero": "Lucha",
+        "precio": 34.99,
+        "pegi": 12,
+        "multijugador": true
+    },
+    {
+        "id": 6,
+        "titulo": "Hollow Knight",
+        "genero": "Aventura",
+        "precio": 14.99,
+        "pegi": 7,
+        "multijugador": false
+    },
+    {
+        "id": 7,
+        "titulo": "Forza Horizon",
+        "genero": "Carreras",
+        "precio": 69.99,
+        "pegi": 3,
+        "multijugador": true
+    },
+    {
+        "id": 8,
+        "titulo": "Elden Ring",
+        "genero": "Rol",
+        "precio": 59.99,
+        "pegi": 16,
+        "multijugador": true
+    }
+]
