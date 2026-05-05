@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Obtención remota de información</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f4;
+        }
+
+        header,
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        .descripcion {
+            color: #555;
+        }
+
+        .panel {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .fila {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select,
+        button {
+            padding: 8px;
+            min-width: 170px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #resultado {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            min-height: 150px;
+        }
+
+        .ofertas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+        }
+
+        .oferta {
+            border: 1px solid #ccc;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+
+        .oferta h3 {
+            margin-top: 0;
+        }
+
+        .descuento {
+            font-weight: bold;
+        }
+
+        .mensaje {
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+        }
+
+        .cargando {
+            color: #666;
+            font-style: italic;
+        }
+
+        .error {
+            color: darkred;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Obtención remota de información</h1>
+    <p class="descripcion">
+        El cliente llama a un PHP propio. Ese PHP obtiene datos de otro servicio usando cURL,
+        transforma el JSON recibido y devuelve un fragmento HTML.
+    </p>
+</header>
+
+<main>
+
+    <section class="panel">
+        <h2>Ofertas externas</h2>
+
+        <form id="formOfertas">
+            <div class="fila">
+
+                <div>
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria">
+                        <option value="">Todas</option>
+                        <option value="Rol">Rol</option>
+                        <option value="Carreras">Carreras</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Construcción">Construcción</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit">Cargar ofertas externas</button>
+                </div>
+
+            </div>
+        </form>
+    </section>
+
+    <section id="resultado">
+        <p class="mensaje">
+            Pulsa el botón para cargar ofertas desde el proveedor remoto simulado.
+        </p>
+    </section>
+
+</main>
+
+<script>
+    const URL_OFERTAS = "servidor/controlador.php";
+
+    const formOfertas = document.getElementById("formOfertas");
+    const selectCategoria = document.getElementById("categoria");
+    const resultado = document.getElementById("resultado");
+
+    formOfertas.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        await cargarOfertas();
+    });
+
+    async function cargarOfertas() {
+        const categoria = selectCategoria.value;
+
+        const parametros = new URLSearchParams();
+        parametros.append("categoria", categoria);
+
+        const url = URL_OFERTAS + "?" + parametros.toString();
+
+        resultado.innerHTML = '<p class="cargando">Cargando ofertas externas...</p>';
+
+        try {
+            const respuesta = await fetch(url);
+
+            if (!respuesta.ok) {
+                throw new Error("Error en la petición al servidor PHP");
+            }
+
+            const html = await respuesta.text();
+
+            resultado.innerHTML = html;
+
+        } catch (error) {
+            resultado.innerHTML = '<p class="error">No se pudieron cargar las ofertas.</p>';
+            console.log(error);
+        }
+    }
+</script>
+
+</body>
+</html>
